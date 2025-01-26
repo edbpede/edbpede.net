@@ -1,0 +1,70 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const links = [
+	{ name: 'Docs', url: 'https://docs.edbpede.net', icon: 'mdi:book-open-variant', description: 'Instructions and guides' },
+	{ name: 'Eksamen', url: 'https://eksamen.edbpede.net', icon: 'mdi:test-tube', description: 'Test exams for students' },
+	{ name: 'Portaler', url: 'https://portaler.edbpede.net', icon: 'mdi:view-grid', description: 'Digital learning platforms' },
+	{ name: 'Tube', url: 'https://tube.edbpede.net', icon: 'mdi:youtube', description: 'Download YouTube videos' },
+	{ name: 'Tunes', url: 'https://tunes.edbpede.net', icon: 'mdi:music', description: 'Download YouTube audio' },
+];
+---
+
+<div class="relative w-full h-screen flex items-center justify-center">
+	<!-- Container for the entire navigation -->
+	<div class="relative w-[500px] h-[500px]">
+		<!-- Center logo -->
+		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center transform transition-all duration-500 hover:scale-105 hover:shadow-2xl animate-fadeIn z-10">
+			<img src="/edbpede.svg" alt="EdBPede Logo" class="w-36 h-36 object-contain" />
+		</div>
+		
+		<!-- Circular links -->
+		{links.map((link, index) => {
+			const angle = (index * (360 / links.length) - 90) * (Math.PI / 180);
+			const radius = 180; // Distance from center
+			const x = Math.cos(angle) * radius;
+			const y = Math.sin(angle) * radius;
+			
+			return (
+				<a
+					href={link.url}
+					class="absolute left-1/2 top-1/2 w-24 h-24 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex flex-col items-center justify-center transform hover:scale-110 transition-all duration-300 hover:shadow-xl group animate-bubbleIn"
+					style={`transform: translate(calc(-50% + ${x}px), calc(-50% + ${y}px)); animation-delay: ${index * 150}ms;`}
+				>
+					<Icon name={link.icon} class="w-8 h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
+					<span class="text-sm font-medium mt-1 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
+					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-sm text-gray-700 shadow-lg transition-all duration-300 w-40 text-center -bottom-16 transform scale-95 group-hover:scale-100 z-20">
+						{link.description}
+					</div>
+				</a>
+			);
+		})}
+	</div>
+</div>
+
+<style>
+	@keyframes fadeIn {
+		from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+		to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+	}
+
+	@keyframes bubbleIn {
+		from { 
+			opacity: 0; 
+			transform: translate(var(--tw-translate-x), var(--tw-translate-y)) scale(0.5); 
+		}
+		to { 
+			opacity: 1; 
+			transform: translate(var(--tw-translate-x), var(--tw-translate-y)) scale(1); 
+		}
+	}
+
+	.animate-fadeIn {
+		animation: fadeIn 1s ease-out forwards;
+	}
+
+	.animate-bubbleIn {
+		opacity: 0;
+		animation: bubbleIn 0.5s ease-out forwards;
+	}
+</style>

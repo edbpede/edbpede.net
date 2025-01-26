@@ -1,11 +1,25 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import CircularNav from '../components/CircularNav.astro';
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="EdBPede.net">
+	<main class="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+		<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]"></div>
+		<div class="relative w-full h-screen flex items-center justify-center">
+			<CircularNav />
+		</div>
+	</main>
 </Layout>
+
+<style>
+	main {
+		animation: gradientAnimation 15s ease infinite;
+		background-size: 300% 300%;
+	}
+	@keyframes gradientAnimation {
+		0% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
+		100% { background-position: 0% 50%; }
+	}
+</style>
