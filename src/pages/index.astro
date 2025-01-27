@@ -4,9 +4,16 @@ import CircularNav from '../components/CircularNav.astro';
 ---
 
 <Layout title="EdBPede.net">
-	<main class="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+	<main class="min-h-screen bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 relative overflow-hidden">
+		<!-- Background effects -->
 		<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]"></div>
-		<div class="relative w-full h-screen flex items-center justify-center">
+		<div class="absolute inset-0 opacity-30">
+			<div class="absolute inset-0 animate-blob1 bg-gradient-to-br from-blue-500/30 to-transparent rounded-full blur-2xl"></div>
+			<div class="absolute inset-0 animate-blob2 bg-gradient-to-br from-purple-500/30 to-transparent rounded-full blur-2xl"></div>
+			<div class="absolute inset-0 animate-blob3 bg-gradient-to-br from-pink-500/30 to-transparent rounded-full blur-2xl"></div>
+		</div>
+		
+		<div class="relative z-10 min-h-screen flex items-center justify-center">
 			<CircularNav />
 		</div>
 	</main>
@@ -15,11 +22,35 @@ import CircularNav from '../components/CircularNav.astro';
 <style>
 	main {
 		animation: gradientAnimation 15s ease infinite;
-		background-size: 300% 300%;
+		background-size: 200% 200%;
 	}
+
 	@keyframes gradientAnimation {
 		0% { background-position: 0% 50%; }
 		50% { background-position: 100% 50%; }
 		100% { background-position: 0% 50%; }
 	}
+
+	@keyframes blob1 {
+		0%, 100% { transform: translate(0, 0) scale(1); }
+		33% { transform: translate(20%, -20%) scale(1.2); }
+		66% { transform: translate(-20%, 20%) scale(0.8); }
+	}
+
+	@keyframes blob2 {
+		0%, 100% { transform: translate(0, 0) scale(0.8); }
+		33% { transform: translate(-20%, 20%) scale(1.2); }
+		66% { transform: translate(20%, -20%) scale(1); }
+	}
+
+	@keyframes blob3 {
+		0%, 100% { transform: translate(0, 0) scale(1.2); }
+		33% { transform: translate(20%, 20%) scale(0.8); }
+		66% { transform: translate(-20%, -20%) scale(1); }
+	}
+
+	.animate-blob1 { animation: blob1 20s infinite; }
+	.animate-blob2 { animation: blob2 25s infinite; }
+	.animate-blob3 { animation: blob3 30s infinite; }
 </style>
+

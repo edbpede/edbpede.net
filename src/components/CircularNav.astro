@@ -10,44 +10,42 @@ const links = [
 ];
 ---
 
-<div class="relative w-full h-screen flex items-center justify-center">
-	<!-- Container for the entire navigation -->
-	<div class="relative w-[500px] h-[500px]">
+<div class="flex items-center justify-center w-full h-full">
+	<div class="relative w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] lg:w-[400px] lg:h-[400px]">
 		<!-- Center logo -->
-		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center transform transition-all duration-500 hover:scale-105 hover:shadow-2xl animate-fadeIn z-10">
-			<img src="/edbpede.svg" alt="EdBPede Logo" class="w-36 h-36 object-contain" />
+		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-full bg-white/90 backdrop-blur-sm shadow-xl flex items-center justify-center transform transition-all duration-500 hover:scale-110 hover:shadow-2xl z-20">
+			<img src="/edbpede.svg" alt="EdBPede Logo" class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 p-2 object-contain" />
 		</div>
 		
 		<!-- Circular links -->
 		{links.map((link, index) => {
-			const angle = (index * (360 / links.length) - 90) * (Math.PI / 180);
-			const radius = 180; // Distance from center
-			const x = Math.cos(angle) * radius;
-			const y = Math.sin(angle) * radius;
+			const totalLinks = links.length;
+			const angle = ((index * (360 / totalLinks)) + 270) * (Math.PI / 180);
+			const radius = 'calc(min(40%, 140px))';
+			const x = `calc(${Math.cos(angle)} * ${radius})`;
+			const y = `calc(${Math.sin(angle)} * ${radius})`;
 			
 			return (
 				<a
 					href={link.url}
-					class="absolute left-1/2 top-1/2 w-24 h-24 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex flex-col items-center justify-center transform hover:scale-110 transition-all duration-300 hover:shadow-xl group animate-bubbleIn"
-					style={`transform: translate(calc(-50% + ${x}px), calc(-50% + ${y}px)); animation-delay: ${index * 150}ms;`}
+					class="absolute left-1/2 top-1/2 w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex flex-col items-center justify-center transform hover:scale-110 transition-all duration-300 hover:shadow-xl group animate-bubbleIn hover:z-30"
+					style={`transform: translate(calc(-50% + ${x}), calc(-50% + ${y})); animation-delay: ${index * 150}ms;`}
 				>
-					<Icon name={link.icon} class="w-8 h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
-					<span class="text-sm font-medium mt-1 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
-					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-sm text-gray-700 shadow-lg transition-all duration-300 w-40 text-center -bottom-16 transform scale-95 group-hover:scale-100 z-20">
+					<Icon name={link.icon} class="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
+					<span class="text-[10px] sm:text-xs lg:text-sm font-medium mt-0.5 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
+					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/95 backdrop-blur-sm rounded-lg p-2 text-xs text-gray-700 shadow-xl transition-all duration-300 w-28 sm:w-32 lg:w-36 text-center -bottom-14 transform scale-95 group-hover:scale-100 pointer-events-none">
 						{link.description}
 					</div>
 				</a>
 			);
 		})}
+
+		<!-- Decorative ring -->
+		<div class="absolute inset-0 rounded-full border-2 border-white/20 animate-spin-slow"></div>
 	</div>
 </div>
 
 <style>
-	@keyframes fadeIn {
-		from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-		to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-	}
-
 	@keyframes bubbleIn {
 		from { 
 			opacity: 0; 
@@ -59,12 +57,10 @@ const links = [
 		}
 	}
 
-	.animate-fadeIn {
-		animation: fadeIn 1s ease-out forwards;
-	}
-
 	.animate-bubbleIn {
 		opacity: 0;
-		animation: bubbleIn 0.5s ease-out forwards;
+		animation: bubbleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 	}
 </style>
+
+
