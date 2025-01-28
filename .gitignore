@@ -23,9 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# vscode
-.vscode/
-
 # AI Stuff
 .aiderules
 .clinerules
