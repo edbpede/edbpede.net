@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+
+	* {
+		@apply transition-[background,transform,opacity,shadow] duration-300 ease-in-out;
+	}
+}
+
+@layer utilities {
+	.backdrop-blur-sm {
+		backdrop-filter: blur(8px);
+	}
+}

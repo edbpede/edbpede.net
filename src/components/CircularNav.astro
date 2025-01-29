@@ -11,29 +11,33 @@ const links = [
 ---
 
 <div class="relative w-full h-screen flex items-center justify-center">
-	<!-- Container for the entire navigation -->
-	<div class="relative w-[500px] h-[500px]">
+	<div class="relative w-[700px] h-[700px]">
 		<!-- Center logo -->
-		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center transform transition-all duration-500 hover:scale-105 hover:shadow-2xl animate-fadeIn z-10">
-			<img src="/edbpede.svg" alt="EdBPede Logo" class="w-36 h-36 object-contain" />
+		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white/95 backdrop-blur-sm shadow-2xl flex items-center justify-center transform transition-all duration-500 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] animate-fadeIn">
+			<img src="/edbpede.svg" alt="EdBPede Logo" class="w-52 h-52 object-contain p-6" />
 		</div>
 		
 		<!-- Circular links -->
 		{links.map((link, index) => {
-			const angle = (index * (360 / links.length) - 90) * (Math.PI / 180);
-			const radius = 180; // Distance from center
+			const angle = ((index * (360 / links.length)) - 90) * (Math.PI / 180);
+			const radius = 250;
 			const x = Math.cos(angle) * radius;
 			const y = Math.sin(angle) * radius;
 			
 			return (
 				<a
 					href={link.url}
-					class="absolute left-1/2 top-1/2 w-24 h-24 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex flex-col items-center justify-center transform hover:scale-110 transition-all duration-300 hover:shadow-xl group animate-bubbleIn"
-					style={`transform: translate(calc(-50% + ${x}px), calc(-50% + ${y}px)); animation-delay: ${index * 150}ms;`}
+					class="absolute w-28 h-28 rounded-full bg-white/95 backdrop-blur-sm shadow-xl flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] group animate-bubbleIn"
+					style={{
+						left: `calc(50% + ${x}px)`,
+						top: `calc(50% + ${y}px)`,
+						transform: 'translate(-50%, -50%)',
+						animationDelay: `${index * 150}ms`
+					}}
 				>
 					<Icon name={link.icon} class="w-8 h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
-					<span class="text-sm font-medium mt-1 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
-					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/90 backdrop-blur-sm rounded-lg p-2 text-sm text-gray-700 shadow-lg transition-all duration-300 w-40 text-center -bottom-16 transform scale-95 group-hover:scale-100 z-20">
+					<span class="text-sm font-medium mt-2 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
+					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/95 backdrop-blur-sm rounded-lg p-3 text-xs text-gray-700 shadow-xl transition-all duration-300 w-48 text-center -bottom-16 transform scale-95 group-hover:scale-100">
 						{link.description}
 					</div>
 				</a>
@@ -49,22 +53,18 @@ const links = [
 	}
 
 	@keyframes bubbleIn {
-		from { 
-			opacity: 0; 
-			transform: translate(var(--tw-translate-x), var(--tw-translate-y)) scale(0.5); 
-		}
-		to { 
-			opacity: 1; 
-			transform: translate(var(--tw-translate-x), var(--tw-translate-y)) scale(1); 
-		}
+		from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+		to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 	}
 
 	.animate-fadeIn {
-		animation: fadeIn 1s ease-out forwards;
+		animation: fadeIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 	}
 
 	.animate-bubbleIn {
 		opacity: 0;
-		animation: bubbleIn 0.5s ease-out forwards;
+		animation: bubbleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 	}
 </style>
+
+
