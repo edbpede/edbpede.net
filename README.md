@@ -78,10 +78,6 @@ The website features a modern design approach with:
 
 ## ⚖️ License
 
-This project is licensed under the AGPLv3 License - see the [LICENSE](LICENSE) file for details.
+[![GNU AGPLv3 Image](https://www.gnu.org/graphics/agplv3-155x51.png)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
-<div align="center">
-	<a href="https://www.gnu.org/licenses/agpl-3.0.en.html">
-		<img src="public/agplv3_icon.png" alt="GNU AGPLv3">
-	</a>
-</div>
+This project is licensed under the AGPLv3 License - see the [LICENSE](LICENSE) file for details.
