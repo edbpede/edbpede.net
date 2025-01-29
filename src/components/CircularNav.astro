@@ -3,12 +3,12 @@ import { Icon } from 'astro-icon/components';
 
 const links = [
 	{ name: 'Guides', url: 'https://docs.edbpede.net', icon: 'mdi:book-open-variant', description: 'Vejledninger, instruktioner og guides' },
-	{ name: 'Portaler', url: 'https://portaler.edbpede.net', icon: 'mdi:view-grid', description: 'Oversigt over digitale læringsplatforme' },
+	{ name: 'Portaler', url: 'https://portaler.edbpede.net', icon: '/str_logo_icon.svg', description: 'Oversigt over digitale læringsplatforme', isImage: true },
 	{ name: 'Eksamen', url: 'https://eksamen.edbpede.net', icon: 'mdi:test-tube', description: 'Prøveeksamener for studerende' },
 	{ name: 'Tunes', url: 'https://tunes.edbpede.net', icon: 'mdi:music', description: 'Download YouTube-videoer som lyd/mp3' },
 	{ name: 'YouTube', url: 'https://tube.edbpede.net', icon: 'mdi:youtube', description: 'Download YouTube-videoer' },
-
 ];
+
 ---
 
 <div class="relative w-full h-screen flex items-center justify-center">
@@ -36,7 +36,10 @@ const links = [
 						animationDelay: `${index * 150}ms`
 					}}
 				>
-					<Icon name={link.icon} class="w-8 h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
+					{link.isImage ? 
+						<img src={link.icon} alt={link.name} class="w-7 h-7 group-hover:opacity-75 transition-all duration-300" /> :
+						<Icon name={link.icon} class="w-8 h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
+					}
 					<span class="text-sm font-medium mt-2 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
 					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/95 backdrop-blur-sm rounded-lg p-3 text-xs text-gray-700 shadow-xl transition-all duration-300 w-48 text-center -bottom-16 transform scale-95 group-hover:scale-100">
 						{link.description}
