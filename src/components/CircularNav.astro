@@ -8,40 +8,39 @@ const links = [
 	{ name: 'Tunes', url: 'https://tunes.edbpede.net', icon: 'mdi:music', description: 'Download YouTube-videoer som lyd/mp3' },
 	{ name: 'YouTube', url: 'https://tube.edbpede.net', icon: 'mdi:youtube', description: 'Download YouTube-videoer' },
 ];
-
 ---
 
 <div class="relative w-full h-screen flex items-center justify-center">
-	<div class="relative w-[800px] h-[800px]">
+	<div class="relative w-full max-w-[800px] aspect-square">
 		<!-- Center logo -->
-		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-white/95 backdrop-blur-sm shadow-2xl flex items-center justify-center transform transition-all duration-500 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] animate-fadeIn">
-			<img src="/edbpede.svg" alt="EdBPede Logo" class="w-64 h-64 object-contain p-1" />
+		<div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 md:w-72 h-48 md:h-72 rounded-full bg-white/95 backdrop-blur-sm shadow-2xl flex items-center justify-center transform transition-all duration-500 hover:scale-105 hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] animate-fadeIn">
+			<img src="/edbpede.svg" alt="EdBPede Logo" class="w-40 md:w-64 h-40 md:h-64 object-contain p-1" />
 		</div>
 		
 		<!-- Circular links -->
 		{links.map((link, index) => {
 			const angle = ((index * (360 / links.length)) - 90) * (Math.PI / 180);
-			const radius = 280; // Increased from 250 to accommodate larger center logo
-			const x = Math.cos(angle) * radius;
-			const y = Math.sin(angle) * radius;
+			const radius = 'calc(min(35vw, 280px))'; // Responsive radius
+			const x = `calc(${Math.cos(angle)} * ${radius})`;
+			const y = `calc(${Math.sin(angle)} * ${radius})`;
 			
 			return (
 				<a
 					href={link.url}
-					class="absolute w-28 h-28 rounded-full bg-white/95 backdrop-blur-sm shadow-xl flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] group animate-bubbleIn"
+					class="absolute w-20 md:w-28 h-20 md:h-28 rounded-full bg-white/95 backdrop-blur-sm shadow-xl flex flex-col items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] group animate-bubbleIn"
 					style={{
-						left: `calc(50% + ${x}px)`,
-						top: `calc(50% + ${y}px)`,
+						left: `calc(50% + ${x})`,
+						top: `calc(50% + ${y})`,
 						transform: 'translate(-50%, -50%)',
 						animationDelay: `${index * 150}ms`
 					}}
 				>
 					{link.isImage ? 
-						<img src={link.icon} alt={link.name} class="w-7 h-7 group-hover:opacity-75 transition-all duration-300" /> :
-						<Icon name={link.icon} class="w-8 h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
+						<img src={link.icon} alt={link.name} class="w-5 md:w-7 h-5 md:h-7 group-hover:opacity-75 transition-all duration-300" /> :
+						<Icon name={link.icon} class="w-6 md:w-8 h-6 md:h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-300" />
 					}
-					<span class="text-sm font-medium mt-2 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
-					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/95 backdrop-blur-sm rounded-lg p-3 text-xs text-gray-700 shadow-xl transition-all duration-300 w-48 text-center -bottom-16 transform scale-95 group-hover:scale-100">
+					<span class="text-xs md:text-sm font-medium mt-1 md:mt-2 text-gray-700 group-hover:text-blue-600 transition-colors duration-300">{link.name}</span>
+					<div class="absolute opacity-0 group-hover:opacity-100 bg-white/95 backdrop-blur-sm rounded-lg p-2 md:p-3 text-xs text-gray-700 shadow-xl transition-all duration-300 w-36 md:w-48 text-center -bottom-12 md:-bottom-16 transform scale-95 group-hover:scale-100">
 						{link.description}
 					</div>
 				</a>
@@ -70,5 +69,6 @@ const links = [
 		animation: bubbleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 	}
 </style>
+
 
 
