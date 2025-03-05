@@ -1,19 +1,11 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
-import icon from 'astro-icon';
+import { defineConfig } from "astro/config";
+import icon from "astro-icon";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   integrations: [icon()],
   vite: {
-    css: {
-      postcss: {
-        plugins: [
-          tailwindcss,
-          autoprefixer,
-        ],
-      },
-    },
-  }
+    plugins: [tailwindcss()],
+  },
 });
