@@ -29,13 +29,13 @@ cd edbpede.net
 2. Install dependencies:
 
 ```bash
-npm install
+bun install
 ```
 
 3. Start development server:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 4. Open [http://localhost:4321](http://localhost:4321) in your browser
@@ -62,9 +62,9 @@ Available commands:
 
 | Command           | Action                                       |
 | ----------------- | -------------------------------------------- |
-| `npm run dev`     | Start development server at `localhost:4321` |
-| `npm run build`   | Build for production to `./dist/`            |
-| `npm run preview` | Preview production build locally             |
+| `bun run dev`     | Start development server at `localhost:4321` |
+| `bun run build`   | Build for production to `./dist/`            |
+| `bun run preview` | Preview production build locally             |
 
 ## 🎨 Design
 

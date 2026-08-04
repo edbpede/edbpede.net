@@ -42,8 +42,6 @@ jobs:
           # Derived from the committed `packageManager` field, not `latest`.
           bun-version-file: package.json
 
-      # bun.lock is authoritative here; the package-lock.json sitting beside it
-      # is stale and deliberately unused.
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
