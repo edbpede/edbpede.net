@@ -18,7 +18,7 @@
     "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.4",
+    "@astrojs/check": "0.9.10",
     "@biomejs/biome": "2.5.7",
     "@iconify-json/mdi": "^1.2.3",
     "@swc/helpers": "^0.5.17",
