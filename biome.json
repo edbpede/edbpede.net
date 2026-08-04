@@ -29,9 +29,6 @@
       "correctness": {
         "noUnusedImports": "off",
         "noUnusedVariables": "off"
-      },
-      "complexity": {
-        "noImportantStyles": "off"
       }
     }
   },
