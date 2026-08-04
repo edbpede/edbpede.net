@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -25,11 +25,11 @@
 }
 
 @layer base {
-	html {
-		scroll-behavior: smooth;
-	}
+  html {
+    scroll-behavior: smooth;
+  }
 
-	* {
-		@apply transition-[background,transform,opacity,shadow] duration-300 ease-in-out;
-	}
+  * {
+    @apply transition-[background,transform,opacity,shadow] duration-300 ease-in-out;
+  }
 }
