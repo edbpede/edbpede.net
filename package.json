@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@biomejs/biome": "2.5.7",
+    "@biomejs/biome": "2.5.10",
     "@iconify-json/mdi": "^1.2.3",
     "@swc/helpers": "^0.5.17",
     "@tailwindcss/postcss": "^4.0.9",
