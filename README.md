@@ -1,21 +1,25 @@
 # edbpede.net
 
-Personal website built with modern web technologies, featuring smooth animations, dynamic gradients, and a clean, minimalist design.
+The landing hub for edbpede.net: a single page with an animated gradient background and a
+ring of links out to the sibling subdomains.
 
 ## ✨ Features
 
-- Responsive design with fluid animations
-- Dynamic gradient backgrounds
-- Interactive circular navigation
-- Modern, minimalist UI
-- Optimized performance with minimal JavaScript
+- Circular navigation to the five edbpede.net subdomains
+- Animated gradient background and radial overlays
+- Responsive from phone to desktop
+- Ships zero JavaScript — every animation and hover state is pure CSS
 
 ## 🛠️ Tech Stack
 
-- [Astro](https://astro.build) - Static Site Generator
-- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
-- [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
-- [Astro Icon](https://github.com/natemoo-re/astro-icon) - Icon integration
+- [Bun](https://bun.sh) — runtime, package manager, and script runner
+- [Astro](https://astro.build) — static site generator, no adapter
+- [Svelte 5](https://svelte.dev) — island integration, wired and ready (no island yet)
+- [UnoCSS](https://unocss.dev) — styling engine, `presetWind4`
+- [TypeScript](https://www.typescriptlang.org/) — type-safe JavaScript
+- [Biome](https://biomejs.dev) — formatter and linter
+- [Playwright](https://playwright.dev) — end-to-end tests
+- [Astro Icon](https://github.com/natemoo-re/astro-icon) — icon integration
 
 ## 🚀 Quick Start
 
@@ -44,15 +48,26 @@ bun run dev
 
 ```
 /
-├── public/           # Static assets
+├── public/              # Static assets served as-is
 │   ├── favicon.svg
-│   └── edbpede.svg
+│   ├── edbpede.svg
+│   └── str_logo_icon.svg
+├── e2e/                 # Playwright specs, run against dist/
+├── scripts/
+│   └── serve-dist.ts    # Static file server used by the e2e suite
 ├── src/
-│   ├── components/   # Reusable UI components
-│   ├── layouts/      # Page layouts
-│   ├── pages/        # File-based routing
-│   ├── styles/       # Global styles
-│   └── assets/       # Project assets
+│   ├── components/      # Reusable UI components
+│   ├── layouts/         # Page layouts
+│   ├── pages/           # File-based routing
+│   └── styles/          # Global CSS (plain CSS; utilities come from UnoCSS)
+├── .agents/rules/       # Guidance for AI coding agents
+├── astro.config.mjs
+├── uno.config.ts        # The styling source of truth
+├── svelte.config.js
+├── playwright.config.ts
+├── biome.json
+├── bunfig.toml
+├── tsconfig.json
 └── package.json
 ```
 
@@ -60,21 +75,25 @@ bun run dev
 
 Available commands:
 
-| Command           | Action                                       |
-| ----------------- | -------------------------------------------- |
-| `bun run dev`     | Start development server at `localhost:4321` |
-| `bun run build`   | Build for production to `./dist/`            |
-| `bun run preview` | Preview production build locally             |
+| Command              | Action                                        |
+| -------------------- | --------------------------------------------- |
+| `bun run dev`        | Start development server at `localhost:4321`  |
+| `bun run build`      | Build for production to `./dist/`             |
+| `bun run preview`    | Preview production build locally              |
+| `bun run check`      | Type-check with `astro check`                 |
+| `bun run lint`       | Check formatting and lint rules with Biome    |
+| `bun run lint:fix`   | Apply Biome's safe fixes                      |
+| `bun run test:e2e`   | Run the Playwright suite against `./dist/`    |
+
+`bun run test:e2e` tests the built output, so run `bun run build` first. The first run also
+needs a browser: `bunx --bun playwright install chromium`.
 
 ## 🎨 Design
 
-The website features a modern design approach with:
-
-- Animated gradient backgrounds
-- Smooth transitions and animations
-- Radial gradient overlays for depth
+- Animated gradient background with radial overlays for depth
+- Circular link layout that scales with the viewport
+- Hover descriptions on each destination
 - Minimalist and clean user interface
-- Optimized for all device sizes
 
 ## ⚖️ License
 

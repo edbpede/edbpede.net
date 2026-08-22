@@ -1,14 +1,13 @@
 # Tier-1 smoke test: build the site, serve it, and prove the route loads.
 #
-# Deliberately NOT a browser test. It verifies that the app builds, boots and
-# serves real content. It will NOT catch client-side breakage: a prerendered
-# Astro page returns 200 with a valid <title> even when a dependency bump has
-# broken client-side behaviour. Upgrading to a real browser test is a separate
-# decision, not something to bolt on here.
+# Deliberately NOT a browser test: it verifies that the app builds, boots and
+# serves real content, with no browser download in the path. The browser gate
+# is tests.yml (Playwright, e2e/), which is strictly stronger — this workflow
+# is kept because it is the fast, dependency-light signal, and because it is
+# reported independently of the lint/format gate.
 #
-# code-quality.yml also builds this repo. Keeping smoke in its own workflow
-# costs one extra build per push; that was the accepted tradeoff for having the
-# smoke signal reported independently of the lint/format gate.
+# code-quality.yml and tests.yml also build this repo, so smoke costs one extra
+# build per push; that is the accepted tradeoff for the independent signal.
 name: Smoke Test
 
 on:
@@ -52,10 +51,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          # `--host 127.0.0.1` is explicit on purpose: Astro otherwise binds the
-          # name `localhost`, which can resolve to ::1 first, while the probes
-          # below dial IPv4 literally.
-          bun run preview -- --host 127.0.0.1 --port 4321 &
+          # Not `astro preview`: in Astro 7 it registers a background daemon, so
+          # the process this step backgrounds is a wrapper that outlives its own
+          # `kill` and leaves the port held. scripts/serve-dist.ts is a plain
+          # foreground file server -- the same one playwright.config.ts uses --
+          # and it binds 0.0.0.0, so the IPv4 probes below reach it regardless of
+          # how the runner resolves localhost.
+          PORT=4321 bun run scripts/serve-dist.ts &
           server=$!
           trap 'kill "${server}" 2>/dev/null || true' EXIT
 
