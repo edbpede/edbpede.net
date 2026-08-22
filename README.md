@@ -60,10 +60,14 @@ bun run dev
 │   ├── layouts/         # Page layouts
 │   ├── pages/           # File-based routing
 │   └── styles/          # Global CSS (plain CSS; utilities come from UnoCSS)
+├── .agents/rules/       # Guidance for AI coding agents
 ├── astro.config.mjs
 ├── uno.config.ts        # The styling source of truth
+├── svelte.config.js
 ├── playwright.config.ts
 ├── biome.json
+├── bunfig.toml
+├── tsconfig.json
 └── package.json
 ```
 

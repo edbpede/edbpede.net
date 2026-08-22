@@ -51,10 +51,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          # `--host 127.0.0.1` is explicit on purpose: Astro otherwise binds the
-          # name `localhost`, which can resolve to ::1 first, while the probes
-          # below dial IPv4 literally.
-          bun run preview -- --host 127.0.0.1 --port 4321 &
+          # Not `astro preview`: in Astro 7 it registers a background daemon, so
+          # the process this step backgrounds is a wrapper that outlives its own
+          # `kill` and leaves the port held. scripts/serve-dist.ts is a plain
+          # foreground file server -- the same one playwright.config.ts uses --
+          # and it binds 0.0.0.0, so the IPv4 probes below reach it regardless of
+          # how the runner resolves localhost.
+          PORT=4321 bun run scripts/serve-dist.ts &
           server=$!
           trap 'kill "${server}" 2>/dev/null || true' EXIT
 

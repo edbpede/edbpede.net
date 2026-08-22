@@ -38,9 +38,10 @@ There is no `bun test` script: this page has no runtime logic to unit-test, and 
 exits non-zero when it finds no files. `bunfig.toml` already scopes a future unit suite to
 `src/` so it will not try to run the Playwright specs under `e2e/`.
 
-CI is three workflows, all of which must be green: `code-quality.yml`
+CI is four workflows. Three are gates that must be green: `code-quality.yml`
 (`bunx --bun biome ci .` → `bun run check` → `bun run build`), `tests.yml` (build →
-Playwright), and `smoke.yml` (build → serve → probe `/`).
+Playwright), and `smoke.yml` (build → serve `dist/` via `scripts/serve-dist.ts` → probe `/`).
+`deploy.yml` publishes `dist/` to GitHub Pages on `main` and is not a gate.
 
 ## Gotchas
 
@@ -52,14 +53,25 @@ Playwright), and `smoke.yml` (build → serve → probe `/`).
   `(components|src)/**/*.{js,ts}` glob to `content.pipeline.include` for exactly this reason.
   Class strings built in a `.ts` file outside that glob silently generate no CSS; the
   per-file escape hatch is a `// @unocss-include` comment.
-- **`presetShadcn` is configured to emit nothing** (`color: false`, `radius: false`,
-  `globals: false`). It is present as the estate's token bridge for future shadcn-svelte
-  components. Turning its globals on would set a default `border-color` and a `body`
-  background/colour that this site does not want.
+- **No `presetShadcn` and no `presetAnimations`, unlike the sibling repos.** Neither has a
+  consumer here: there is no shadcn-svelte component, no `components.json` and no `cn()`
+  helper for `presetShadcn` to serve, and `animate-pulse` — the only animation utility on
+  the page — comes from presetWind4's own keyframes. `presetShadcn` is not free when
+  unused: it emits four `@keyframes` (`shadcn-down`/`up`, `shadcn-collapsible-down`/`up`)
+  referencing `--radix-*` variables nothing here can define. Add it back in the shape
+  `faktalink` uses at the moment a real component needs it — and note that its `globals`
+  must stay off, since they set a default `border-color` and `body` colours this site
+  does not want.
 - **presetWind4 names its theme variables `--colors-*`** (`--colors-gray-200`,
   `--colors-white`), and emits one only when a utility that needs it is used. A rule in
   `src/styles/base.css` that references a token no utility pulls in will silently fall
   through to its fallback.
+- **The Svelte integration is wired but no island exists**, and `@astrojs/svelte` emits its
+  ~24 KB client runtime into `dist/_astro/client.svelte.*.js` regardless. Nothing references
+  it — `dist/index.html` contains no `<script>` at all, so no browser ever fetches it — but
+  it does ride along in the GitHub Pages artifact. It disappears on its own the moment a
+  real island imports it; do not "fix" it by removing the integration, which is deliberately
+  in place so an island can be added without a config change.
 - **Pushing to `main` deploys to production** (`deploy.yml` → GitHub Pages, CNAME
   `edbpede.net`). `[skip ci]` in the commit message skips the deploy job only — the quality,
   test, and smoke workflows still run.

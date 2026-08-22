@@ -10,26 +10,6 @@
  * needs no `transformerDirectives` — one `@apply` is not worth a transformer.
  */
 
-/*
-  presetWind4 defaults the border colour to `currentColor`; this restores the
-  older grey default, so an element given a border width but no border colour
-  does not pick up its text colour.
-
-  presetWind4 emits `--colors-gray-200` only when a `*-gray-200` utility is
-  actually used, so today this falls through to `currentColor` — and since
-  nothing in the markup sets a border width, it paints nothing either way.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
-*,
-::after,
-::before,
-::backdrop,
-::file-selector-button {
-  border-color: var(--colors-gray-200, currentColor);
-}
-
 html {
   scroll-behavior: smooth;
 }
