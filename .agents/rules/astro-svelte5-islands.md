@@ -52,7 +52,6 @@ Run everything through Bun. Use `bun --bun` so Astro's CLI executes on the Bun r
     "@astrojs/node": "^9.0.0",
     "svelte": "^5.38.0",
     "nanostores": "^0.11.0",
-    "@nanostores/svelte": "^0.4.0",
     "@nanostores/persistent": "^0.10.0",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.0.0",
@@ -470,17 +469,29 @@ export function addItem(id: string, price: number) {
 }
 ```
 
-Consume in a Svelte island via `@nanostores/svelte`'s `useStore`, which supports the `$` auto-subscription shorthand:
+Consume the store in a `.svelte` island with the `$` auto-subscription shorthand. Nanostores implement Svelte's store contract, so **there is no adapter package to install** and nothing to import but the store itself:
 
 ```svelte
 <script lang="ts">
-  import { useStore } from "@nanostores/svelte";
   import { total, isCartOpen } from "../lib/stores/cart";
-  const total$ = useStore(total);
-  const open$ = useStore(isCartOpen);
 </script>
-{#if $open$}<aside>Total: ${$total$}</aside>{/if}
+{#if $isCartOpen}<aside>Total: ${$total}</aside>{/if}
 ```
+
+`$` auto-subscription is a compiler feature of `.svelte` components, so it is unavailable in `.svelte.ts`/`.svelte.js` modules. Use `@nanostores/svelte-runes` there and read through `.current`; it is built on `createSubscriber`, so one subscription is shared per store and SSR stays correct.
+
+```ts
+// src/lib/stores/cart-view.svelte.ts
+import { useStore } from "@nanostores/svelte-runes";
+import { total } from "./cart";
+
+const totalView = useStore(total);
+export function formatted(): string {
+  return `$${totalView.current}`;
+}
+```
+
+There is no `@nanostores/svelte` package — the npm registry has never carried one. The framework adapters (`@nanostores/react`, `/preact`, `/vue`, `/solid`, `/lit`, `/angular`, `/alpine`) exist for frameworks with no equivalent of Svelte's store contract; Svelte needs none.
 
 ## Astro Actions: type-safe server functions
 
@@ -877,6 +888,7 @@ Choose an adapter by target: `@astrojs/node` (self-hosted/Docker, `mode: "standa
 | `new Component({ target })` | `mount(Component, { target })` |
 | Passing a callback function as an island prop | Share state via nanostores; keep props serializable |
 | Expecting two `client:*` islands to share a module singleton | Cross-island state through nanostores |
+| `import { useStore } from "@nanostores/svelte"` | No such package: `$store` in `.svelte`, `@nanostores/svelte-runes` (`.current`) in `.svelte.ts` |
 | Adding a `tailwind.config.js` + PostCSS + `@apply` in CSS | Configure `uno.config.ts`; use `transformerDirectives` for `@apply` |
 | Relying on default UnoCSS scan for `.ts` variant files | Add `content.pipeline.include` glob for `(components\|src)/**/*.{js,ts}` |
 | Running `shadcn-svelte init` and getting Tailwind v4 wired in | Use `presetShadcn` in UnoCSS; hand-place `utils.ts`/`components.json` |
