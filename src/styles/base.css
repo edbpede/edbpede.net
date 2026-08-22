@@ -1,35 +1,51 @@
-@import "tailwindcss";
-
-@custom-variant dark (&:is(.dark *));
+/*
+ * Global stylesheet.
+ *
+ * UnoCSS is the styling engine: the browser reset arrives via
+ * `UnoCSS({ injectReset: true })` in astro.config.mjs, and every utility class
+ * in the markup is generated on demand by presetWind4 (see uno.config.ts).
+ *
+ * What remains here is the handful of genuinely global rules that are not
+ * utilities. They are plain CSS rather than UnoCSS directives so that the build
+ * needs no `transformerDirectives` — one `@apply` is not worth a transformer.
+ */
 
 /*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+  presetWind4 defaults the border colour to `currentColor`; this restores the
+  older grey default, so an element given a border width but no border colour
+  does not pick up its text colour.
+
+  presetWind4 emits `--colors-gray-200` only when a `*-gray-200` utility is
+  actually used, so today this falls through to `currentColor` — and since
+  nothing in the markup sets a border width, it paints nothing either way.
 
   If we ever want to remove these styles, we need to add an explicit border
   color utility to any element that depends on these defaults.
 */
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
-  }
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+  border-color: var(--colors-gray-200, currentColor);
 }
 
-@utility backdrop-blur-sm {
-  backdrop-filter: blur(8px);
+html {
+  scroll-behavior: smooth;
 }
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+/*
+  Every element eases the four properties the hover states animate, so a card
+  that only changes `transform` still settles at the same speed as one that
+  also changes `shadow`. Utility classes on individual elements (for example
+  `transition-all duration-500` on the centre logo) win on specificity and
+  override this.
 
-  * {
-    @apply transition-[background,transform,opacity,shadow] duration-300 ease-in-out;
-  }
+  Previously written as `@apply transition-[background,transform,opacity,shadow]
+  duration-300 ease-in-out`; this is the CSS that expanded to.
+*/
+* {
+  transition-property: background, transform, opacity, shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.3s;
 }

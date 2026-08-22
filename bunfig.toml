@@ -1,0 +1,13 @@
+[test]
+# Scope `bun test` to the unit suite. Without this, the bare command also picks
+# up e2e/*.spec.ts, which import @playwright/test and cannot run under bun:test.
+# There is no unit suite yet — this site is a single prerendered page with no
+# runtime logic — so the scope is set up front rather than after the first
+# failure. The Playwright specs have their own runner (`bun run test:e2e`).
+root = "src"
+
+[install]
+# Single-package project: hoisted is Bun's default here and what Astro/Vite expect.
+linker = "hoisted"
+# Pin what we resolve, so a build is reproducible from the committed lockfile.
+exact = true
