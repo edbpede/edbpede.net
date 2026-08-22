@@ -15,7 +15,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? "list" : [["list"]],
+  // `list` streams progress; the HTML report is what the CI artifact step uploads.
+  // Without an HTML (or other file-writing) reporter, playwright-report/ is never
+  // created and that upload silently produces an empty artifact.
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : [["list"]],
   use: {
     baseURL: "http://127.0.0.1:4321",
     trace: "on-first-retry",

@@ -57,5 +57,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report
-          path: playwright-report/
+          # Both: playwright-report/ is the HTML report, test-results/ holds the
+          # trace zips that `trace: "on-first-retry"` produces on a CI failure.
+          path: |
+            playwright-report/
+            test-results/
           retention-days: 7
