@@ -4,13 +4,18 @@ This file provides guidance to AI coding agents when working with code in this
 repository.
 
 Astro 7 static site for edbpede.net: one page (`src/pages/index.astro`) rendering a circular
-hub of links to sibling subdomains. No client framework, no islands, no runtime JS — the
-animation is pure CSS.
+hub of links to sibling subdomains. **There are no Svelte islands yet** — the page ships zero
+runtime JavaScript and every animation is pure CSS. The Svelte 5 integration is wired and
+ready (`@astrojs/svelte`, `svelte.config.js`), so an island can be added without touching the
+config; do not invent one to fill the gap.
+
+Stack: Bun · Astro 7 · Svelte 5 (integration only) · TypeScript · UnoCSS `presetWind4` ·
+Biome · Playwright. Every dependency is pinned to an exact version — no `^` ranges.
 
 ## Commands
 
 Bun is the package manager (`packageManager: bun@1.3.14` in `package.json`); npm/pnpm/yarn are
-not used.
+not used. Scripts run Astro's CLI on the Bun runtime via `bunx --bun`.
 
 | Task | Command |
 | --- | --- |
@@ -21,51 +26,67 @@ not used.
 | Typecheck | `bun run check` (`astro check`) |
 | Lint + format check | `bun run lint` (`biome check .`) |
 | Autofix | `bun run lint:fix` |
+| End-to-end tests | `bun run test:e2e` (`playwright test`) |
 
-The CI gate (`.github/workflows/code-quality.yml`) runs `bunx biome ci .`, then `bun run
-check`, then `bun run build`. Run all three locally before pushing.
+`bun run test:e2e` runs against `dist/`, so **build first**. It starts
+`scripts/serve-dist.ts` itself (a plain Bun file server; `astro preview` is unusable as a
+Playwright `webServer` because Astro 7 backgrounds it as a daemon). First run needs
+`bunx --bun playwright install chromium`. To run a single test:
+`bunx --bun playwright test -g "ships no JavaScript"`.
 
-There is no test framework and no unit tests, so there is no single-test command. The only
-runtime check is the smoke test in `.github/workflows/smoke.yml`. Locally:
+There is no `bun test` script: this page has no runtime logic to unit-test, and `bun test`
+exits non-zero when it finds no files. `bunfig.toml` already scopes a future unit suite to
+`src/` so it will not try to run the Playwright specs under `e2e/`.
 
-```bash
-bun run build && bun run preview -- --host 127.0.0.1 --port 4321 &
-curl -fsS http://127.0.0.1:4321/ | grep '<title>'
-```
+CI is three workflows, all of which must be green: `code-quality.yml`
+(`bunx --bun biome ci .` → `bun run check` → `bun run build`), `tests.yml` (build →
+Playwright), and `smoke.yml` (build → serve → probe `/`).
 
 ## Gotchas
 
-- **`tailwind.config.mjs` and `postcss.config.mjs` are inert — editing them silently does
-  nothing.** Tailwind v4 is compiled by the `@tailwindcss/vite` plugin in `astro.config.mjs`;
-  no `@config` directive loads the JS config, and removing `postcss.config.mjs` yields
-  byte-identical output CSS. Put theme tokens, variants, and utilities in
-  `src/styles/base.css` using `@theme` / `@custom-variant` / `@utility`, the CSS-first form
-  that file already uses.
-- **`bun run build` prints `Error running builtin:oxc-runtime on Tailwind CSS output.
-  Skipping.`** plus two similar lines, on a clean checkout, and still exits 0 with correct
-  CSS. Not a regression; don't chase it.
+- **UnoCSS is the styling engine; there is no PostCSS and no `@apply`.** All
+  configuration lives in `uno.config.ts`. `src/styles/base.css` is plain CSS on purpose —
+  `transformerDirectives` is deliberately not enabled, so `@apply` and `theme()` will not
+  work there. Add theme tokens, shortcuts, and custom rules in `uno.config.ts` instead.
+- **UnoCSS does not scan `.ts`/`.js` for class names by default.** `uno.config.ts` adds the
+  `(components|src)/**/*.{js,ts}` glob to `content.pipeline.include` for exactly this reason.
+  Class strings built in a `.ts` file outside that glob silently generate no CSS; the
+  per-file escape hatch is a `// @unocss-include` comment.
+- **`presetShadcn` is configured to emit nothing** (`color: false`, `radius: false`,
+  `globals: false`). It is present as the estate's token bridge for future shadcn-svelte
+  components. Turning its globals on would set a default `border-color` and a `body`
+  background/colour that this site does not want.
+- **presetWind4 names its theme variables `--colors-*`** (`--colors-gray-200`,
+  `--colors-white`), and emits one only when a utility that needs it is used. A rule in
+  `src/styles/base.css` that references a token no utility pulls in will silently fall
+  through to its fallback.
 - **Pushing to `main` deploys to production** (`deploy.yml` → GitHub Pages, CNAME
-  `edbpede.net`). `[skip ci]` in the commit message skips the deploy job only — the quality
-  and smoke workflows still run.
-- **Adding a route also requires editing `.github/workflows/smoke.yml`**: its probe loop is
-  hardcoded to `for path in /`, so a new page is otherwise never smoke-tested.
+  `edbpede.net`). `[skip ci]` in the commit message skips the deploy job only — the quality,
+  test, and smoke workflows still run.
+- **Adding a route means editing two files besides the page**: `.github/workflows/smoke.yml`
+  (its probe loop is hardcoded to `for path in /`) and `e2e/hub.spec.ts`.
 - **`astro.config.mjs` sets no `site`**, so `Astro.site`, sitemaps, and canonical URLs are
   undefined. Add `site: "https://edbpede.net"` there before relying on any of them.
 - **Icons**: `<Icon name="mdi:…" />` resolves against `@iconify-json/mdi`, the only icon set
-  installed — another set needs its own `@iconify-json/*` devDependency. Local SVGs live in
-  `public/` and render through a plain `<img>` (the `isImage` branch in
-  `src/components/CircularNav.astro`).
-- **Biome formats only the `---` frontmatter of `.astro` files, never the template body.**
-  That is why templates are tab-indented while `biome.json` sets `indentStyle: "space"`.
-  Match the surrounding tabs in markup; `lint:fix` will not normalise it and CI will not
-  complain either way.
+  installed — another set needs its own `@iconify-json/*` devDependency. `presetIcons` is
+  also configured, so the `i-mdi-*` utility form works against the same set; the markup
+  currently uses astro-icon's component. Local SVGs live in `public/` and render through a
+  plain `<img>` (the `isImage` branch in `src/components/CircularNav.astro`).
+- **Nothing formats `.astro` or `.svelte` files.** `biome.json` disables the formatter for
+  them (Biome's understanding of these embedded languages is partial) and only lints their
+  script blocks, with `useConst`/`noUnusedVariables`/`noUnusedImports` off to avoid false
+  positives. That is why templates are tab-indented while `biome.json` sets
+  `indentStyle: "space"` — match the surrounding tabs in markup.
+- **Biome does not type-check.** `bun run check` (`astro check`) is the only thing that
+  catches type errors in `.astro` and `.svelte`. Run both.
 - **User-facing copy is Danish**; code, comments, and commit messages are English.
 - Commits follow Conventional Commits (`feat:`, `fix:`, `chore:`, `ci:`, `docs:`).
 
 ## Reference rules
 
-- `.agents/rules/astro-dev-pro.md` — 600-line Astro 7 stack guide; read it for Astro core
-  topics (routing, content, hydration directives) before non-trivial framework work. Its
-  styling and island chapters describe **UnoCSS `presetWind4`, Svelte 5, and SolidJS, none of
-  which this repo uses.** For styling follow `src/styles/base.css` (Tailwind v4) instead, and
-  do not add island integrations to satisfy that document.
+- `.agents/rules/astro-svelte5-islands.md` — the canonical stack guide for Bun + Astro 7 +
+  Svelte 5 islands + UnoCSS + shadcn-svelte + Biome. Read it before non-trivial framework
+  work. It is the estate-wide copy and must stay byte-identical to the source; do not edit
+  it to describe this repo. Where it shows options this repo has not taken (nanostores,
+  shadcn-svelte components, an adapter, `transformerDirectives`), that is deliberate — there
+  is no consumer for any of them here.
