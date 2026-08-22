@@ -18,8 +18,9 @@ The biggest way agents write wrong-but-plausible code here is importing habits f
 | --- | --- | --- |
 | Bun | 1.4.x | Rust rewrite; runtime + package manager + test runner + bundler. Node 26-compatible. |
 | Astro | 7.2.x (7.0 released June 22, 2026) | Rust `.astro` compiler, Vite 8 + Rolldown, Sätteri Markdown, queued rendering default. |
-| `@astrojs/svelte` | current (Svelte 5 line) | Install `@astrojs/svelte@5` only if you need Svelte 3/4. |
+| `@astrojs/svelte` | 9.x | The Svelte 5 line. Install `@astrojs/svelte@5` only if you need Svelte 3/4. |
 | Svelte | 5.x | Runes; attachments since 5.29; `$props.id()` since 5.20. |
+| nanostores | 1.x | Cross-island state. Svelte needs no adapter (store contract); `@nanostores/svelte-runes` 1.x only for `.svelte.ts`. |
 | TypeScript | 5.9.x | `erasableSyntaxOnly` since 5.8; `verbatimModuleSyntax` since 5.0. |
 | UnoCSS | 66.x | `presetWind4` (Tailwind v4-compatible). |
 | `unocss-preset-shadcn` | 1.0.1 | Supports `presetWind4` by default; legacy Wind3 at `unocss-preset-shadcn/v3`. |
@@ -48,21 +49,22 @@ Run everything through Bun. Use `bun --bun` so Astro's CLI executes on the Bun r
   },
   "dependencies": {
     "astro": "^7.2.0",
-    "@astrojs/svelte": "^7.0.0",
-    "@astrojs/node": "^9.0.0",
+    "@astrojs/svelte": "^9.0.0",
+    "@astrojs/node": "^11.0.0",
     "svelte": "^5.38.0",
-    "nanostores": "^0.11.0",
-    "@nanostores/persistent": "^0.10.0",
+    "nanostores": "^1.5.0",
+    "@nanostores/persistent": "^1.3.0",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.0.0",
-    "tailwind-variants": "^1.0.0"
+    "tailwind-variants": "^3.3.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
-    "unocss": "^66.5.0",
-    "@unocss/reset": "^66.5.0",
+    "unocss": "^66.8.0",
+    "@unocss/astro": "^66.8.0",
+    "@unocss/reset": "^66.8.0",
     "unocss-preset-shadcn": "^1.0.1",
-    "unocss-preset-animations": "^1.2.0",
+    "unocss-preset-animations": "^1.3.0",
     "typescript": "^5.9.0"
   }
 }
