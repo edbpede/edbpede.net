@@ -18,7 +18,7 @@
   "dependencies": {
     "astro": "7.2.9",
     "astro-icon": "1.2.0",
-    "svelte": "5.56.10",
+    "svelte": "5.57.0",
     "tslib": "2.8.1"
   },
   "devDependencies": {
