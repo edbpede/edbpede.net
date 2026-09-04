@@ -31,7 +31,7 @@
     "@types/bun": "1.4.0",
     "@unocss/astro": "66.10.0",
     "@unocss/reset": "66.10.0",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "unocss": "66.10.0"
   }
 }
