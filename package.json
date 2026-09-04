@@ -28,7 +28,7 @@
     "@iconify-json/mdi": "1.2.3",
     "@playwright/test": "1.62.1",
     "@swc/helpers": "0.5.23",
-    "@types/bun": "1.4.0",
+    "@types/bun": "1.4.1",
     "@unocss/astro": "66.10.0",
     "@unocss/reset": "66.10.0",
     "typescript": "5.9.3",
