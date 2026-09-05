@@ -5,7 +5,7 @@
   "private": true,
   "description": "Landing hub linking the edbpede.net subdomains.",
   "license": "AGPL-3.0-or-later",
-  "packageManager": "bun@1.4.1",
+  "packageManager": "bun@1.4.2",
   "scripts": {
     "dev": "bunx --bun astro dev",
     "build": "bunx --bun astro build",
