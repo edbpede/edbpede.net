@@ -1,84 +1,27 @@
-# Tier-1 smoke test: build the site, serve it, and prove the route loads.
-#
-# Deliberately NOT a browser test: it verifies that the app builds, boots and
-# serves real content, with no browser download in the path. The browser gate
-# is tests.yml (Playwright, e2e/), which is strictly stronger — this workflow
-# is kept because it is the fast, dependency-light signal, and because it is
-# reported independently of the lint/format gate.
-#
-# code-quality.yml and tests.yml also build this repo, so smoke costs one extra
-# build per push; that is the accepted tradeoff for the independent signal.
-name: Smoke Test
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-  workflow_dispatch:
-
-# Read-only throughout. Unlike code-quality.yml there is no write-capable job
-# here, and no biome-migrate job — that belongs solely to the quality gate.
+name: smoke
+'on':
+  workflow_call: null
 permissions:
   contents: read
-
-concurrency:
-  group: smoke-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   smoke:
-    name: Build · serve · load
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    name: serve and verify published routes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - name: Checkout repository
-        # Matches the pin already used by this repo's other workflows.
-        uses: actions/checkout@v7
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          # Derived from the committed `packageManager` field, not `latest`.
-          bun-version-file: package.json
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Build
-        run: bun run build
-
-      - name: Serve and smoke-test routes
-        run: |
-          set -euo pipefail
-
-          # Not `astro preview`: in Astro 7 it registers a background daemon, so
-          # the process this step backgrounds is a wrapper that outlives its own
-          # `kill` and leaves the port held. scripts/serve-dist.ts is a plain
-          # foreground file server -- the same one playwright.config.ts uses --
-          # and it binds 0.0.0.0, so the IPv4 probes below reach it regardless of
-          # how the runner resolves localhost.
-          PORT=4321 bun run scripts/serve-dist.ts &
-          server=$!
-          trap 'kill "${server}" 2>/dev/null || true' EXIT
-
-          # Readiness loop, deliberately NOT `curl --retry`: this distinguishes
-          # "not up yet" from "up but broken", so a real 500 fails fast instead
-          # of being retried into a timeout.
-          timeout 90 bash -c 'until curl -fsS -o /dev/null http://127.0.0.1:4321/; do sleep 1; done'
-
-          # Assert on CONTENT, not just status — a 200 error page would sail
-          # through a status-only check.
-          #
-          # The body goes to a file rather than into `curl ... | grep -q`:
-          # grep -q exits at the first match, curl then dies of SIGPIPE with
-          # exit 23, and `pipefail` turns that into a failure. Whether it trips
-          # depends on response size and timing, so the piped form is
-          # intermittently red rather than reliably broken.
-          #
-          # Single-page site: `/` is the whole surface.
-          for path in /; do
-            echo "==> ${path}"
-            curl -fsS -m 10 -o "${RUNNER_TEMP}/page.html" "http://127.0.0.1:4321${path}"
-            grep -q '<title>' "${RUNNER_TEMP}/page.html" \
-              || { echo "SMOKE FAILED: ${path} served no <title>"; exit 1; }
-          done
+    - uses: actions/checkout@v7.0.1
+      with:
+        persist-credentials: false
+    - uses: actions/setup-node@v7.0.0
+      with:
+        node-version: 24.20.0
+    - uses: oven-sh/setup-bun@v2.2.0
+      with:
+        bun-version-file: package.json
+    - uses: actions/download-artifact@v8.0.1
+      with:
+        name: site-dist
+        path: dist/
+    - run: bash .github/scripts/smoke.sh
+    - name: Reject tracked-file mutations
+      run: git diff --exit-code HEAD

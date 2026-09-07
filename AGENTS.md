@@ -14,7 +14,7 @@ Biome · Playwright. Every dependency is pinned to an exact version — no `^` r
 
 ## Commands
 
-Bun is the package manager (`packageManager: bun@1.3.14` in `package.json`); npm/pnpm/yarn are
+Bun is the package manager (`packageManager: bun@1.4.2` in `package.json`); npm/pnpm/yarn are
 not used. Scripts run Astro's CLI on the Bun runtime via `bunx --bun`.
 
 | Task | Command |
@@ -38,10 +38,10 @@ There is no `bun test` script: this page has no runtime logic to unit-test, and 
 exits non-zero when it finds no files. `bunfig.toml` already scopes a future unit suite to
 `src/` so it will not try to run the Playwright specs under `e2e/`.
 
-CI is four workflows. Three are gates that must be green: `code-quality.yml`
-(`bunx --bun biome ci .` → `bun run check` → `bun run build`), `tests.yml` (build →
-Playwright), and `smoke.yml` (build → serve `dist/` via `scripts/serve-dist.ts` → probe `/`).
-`deploy.yml` publishes `dist/` to GitHub Pages on `main` and is not a gate.
+`ci.yml` is the unfiltered development entry point and requires the quality,
+HTTP smoke and Playwright lanes. The site is built once; both behavioral lanes
+consume that validated artifact. See [CI.md](CI.md). `deploy.yml` continues to
+publish `dist/` to GitHub Pages on `main`.
 
 ## Gotchas
 
@@ -75,7 +75,7 @@ Playwright), and `smoke.yml` (build → serve `dist/` via `scripts/serve-dist.ts
 - **Pushing to `main` deploys to production** (`deploy.yml` → GitHub Pages, CNAME
   `edbpede.net`). `[skip ci]` in the commit message skips the deploy job only — the quality,
   test, and smoke workflows still run.
-- **Adding a route means editing two files besides the page**: `.github/workflows/smoke.yml`
+- **Adding a route means editing two files besides the page**: `.github/scripts/smoke.sh`
   (its probe loop is hardcoded to `for path in /`) and `e2e/hub.spec.ts`.
 - **`astro.config.mjs` sets no `site`**, so `Astro.site`, sitemaps, and canonical URLs are
   undefined. Add `site: "https://edbpede.net"` there before relying on any of them.
@@ -89,8 +89,8 @@ Playwright), and `smoke.yml` (build → serve `dist/` via `scripts/serve-dist.ts
   script blocks, with `useConst`/`noUnusedVariables`/`noUnusedImports` off to avoid false
   positives. That is why templates are tab-indented while `biome.json` sets
   `indentStyle: "space"` — match the surrounding tabs in markup.
-- **Biome does not type-check.** `bun run check` (`astro check`) is the only thing that
-  catches type errors in `.astro` and `.svelte`. Run both.
+- **Biome does not type-check.** `bun run check` (`astro check`) covers Astro files. Add svelte-check when the first Svelte island
+  is implemented. Run Biome and type checking together.
 - **User-facing copy is Danish**; code, comments, and commit messages are English.
 - Commits follow Conventional Commits (`feat:`, `fix:`, `chore:`, `ci:`, `docs:`).
 
